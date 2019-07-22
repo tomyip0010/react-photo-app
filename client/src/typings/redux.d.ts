@@ -6,8 +6,9 @@ interface GenericActionType {
 };
 
 interface ReduxStoreType {
-  gallery: GalleryStoreType,
-  album: AlbumStoreType,
+  albums: AlbumsStoreType,
+  photos: PhotosStoreType,
+  photoDetail: PhotoDetailStoreType,
 }
 
 interface FilterType {

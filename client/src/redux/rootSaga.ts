@@ -1,10 +1,12 @@
 import { all } from 'redux-saga/effects'; //
-import albumSaga from './album/saga';
-import gallerySaga from './gallery/saga';
+import albumsSaga from './albums/saga';
+import photosSaga from './photos/saga';
+import photoDetailSaga from './photoDetail/saga';
 
 export default function* root() {
   yield all([
-    albumSaga(),
-    gallerySaga(),
+    albumsSaga(),
+    photosSaga(),
+    photoDetailSaga(),
   ])
 };

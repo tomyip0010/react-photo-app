@@ -22,6 +22,7 @@
     "typeRoots" : ["./typings"]
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "src/**/**/*"
   ]
 }

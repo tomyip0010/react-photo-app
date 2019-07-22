@@ -1,9 +1,9 @@
-import { FETCH_ALBUM_LIST } from './action';
+import { FETCH_ALBUM_PHOTOS } from './action';
 
-const initialState: GalleryStoreType = {
+const initialState: PhotosStoreType = {
   isFetching: false,
   fetchSuccess: false,
-  albumList: [],
+  albumPhotos: [],
   totalCount: 0,
   filter: {
     limit: 20,
@@ -17,16 +17,16 @@ export default function reducer(
   action: GenericActionType,
 ) {
   switch (action.type) {
-    case FETCH_ALBUM_LIST.REQUEST:
+    case FETCH_ALBUM_PHOTOS.REQUEST:
       return {
         ...state,
-        albumList: [],
+        albumPhotos: [],
         isFetching: true,
       };
-    case FETCH_ALBUM_LIST.SUCCESS:
+    case FETCH_ALBUM_PHOTOS.SUCCESS:
       return {
         ...state,
-        albumList: action.result.data,
+        albumPhotos: action.result.data,
         totalCount: action.result.totalCount,
         filter: {
           limit: action.result.limit,
@@ -35,7 +35,7 @@ export default function reducer(
         isFetching: false,
         fetchSuccess: true,
       };
-    case FETCH_ALBUM_LIST.FAILURE:
+    case FETCH_ALBUM_PHOTOS.FAILURE:
       return {
         ...state,
         isFetching: false,

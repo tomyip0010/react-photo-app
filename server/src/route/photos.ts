@@ -1,10 +1,12 @@
 import { apiRequest } from '../helper/apiClient';
 import { getRedisKey, exSetRedisKey } from '../helper/cacheManager';
 
-interface GalleryType {
-  userId: number,
+interface PhotoType {
+  albumId: number,
   id: number,
+  thumbnailUrl: string,
   title: string,
+  url: string,
 }
 
 interface ResponseType {
@@ -12,14 +14,15 @@ interface ResponseType {
   offset: number,
   limit: number,
   totalCount: number,
-  data: Array<GalleryType>
+  data: Array<PhotoType>
 }
 
-async function getGalleryContent(req: any, res: any): Promise<void> {
+async function getPhotosContent(req: any, res: any): Promise<void> {
   const refresh = req.query.refresh === 'true';
+  const id = req.query.id;
   const offset = req.query.offset && !isNaN(req.query.offset) ? Number(req.query.offset) : 0;
   const limit = req.query.limit && !isNaN(req.query.limit) ? Number(req.query.limit) : 20;
-  const key = 'gallery-content';
+  const key = `album-content-${id}`;
   const response: ResponseType = {
     success: false,
     offset,
@@ -39,11 +42,11 @@ async function getGalleryContent(req: any, res: any): Promise<void> {
     }
     if (refresh || !dataContent) {
       console.log(`${key}, without cahce, fetching from api`);
-      dataContent = await apiRequest('get', '/albums', {});
+      dataContent = await apiRequest('get', `/photos?albumId=${id}`, {});
     }
     if (dataContent) {
-      const startPos = offset;
-      const endPos = offset + limit;
+      const startPos = offset > 0 ? offset - 1 : offset;
+      const endPos = offset > 0 ? offset + limit - 1 : offset + limit;
       response.data = dataContent.slice(startPos, endPos);
       response.success = true;
       response.totalCount = dataContent.length;
@@ -56,4 +59,4 @@ async function getGalleryContent(req: any, res: any): Promise<void> {
   }
 }
 
-export default getGalleryContent;
+export default getPhotosContent;

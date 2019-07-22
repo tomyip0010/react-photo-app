@@ -1,25 +1,27 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
-import { fetchAlbumList } from 'redux/gallery/action';
-import ListGroup from 'react-bootstrap/ListGroup';
+import { fetchAlbumList } from 'redux/albums/action';
 import ListPagination from 'components/ListPagination';
+import 'components/SharedStyle.css';
+import './styles.css';
 
 type ReduxType = {
 
-} & GalleryStoreType;
+} & AlbumsStoreType;
 
 type Props = {
   fetchAlbumList: typeof fetchAlbumList,
   location: Location,
+  history: any,
 } & ReduxType;
 
 const mapStateToProps = (state: ReduxStoreType) => ({
-  isFetching: state.gallery.isFetching,
-  fetchSuccess: state.gallery.fetchSuccess,
-  totalCount: state.gallery.totalCount,
-  albumList: state.gallery.albumList,
-  filter: state.gallery.filter,
+  isFetching: state.albums.isFetching,
+  fetchSuccess: state.albums.fetchSuccess,
+  totalCount: state.albums.totalCount,
+  albumList: state.albums.albumList,
+  filter: state.albums.filter,
 });
 
 const mapDispatchToProps = {
@@ -28,9 +30,10 @@ const mapDispatchToProps = {
 
 const ITEM_PER_PAGE = 20;
 
-const GalleryPage: React.FC<Props> = (props: Props) => {
+const AlbumsPage: React.FC<Props> = (props: Props) => {
   const {
-    location: { search }, fetchAlbumList, albumList, filter, totalCount,
+    location: { search }, fetchAlbumList, albumList, filter,
+    totalCount, history,
   } = props;
   let currentPage = 0;
 
@@ -39,9 +42,10 @@ const GalleryPage: React.FC<Props> = (props: Props) => {
     const refresh = query && query.refresh ? query.refresh === 'true' : false;
   
     fetchAlbumList(null, refresh);
-  }, [fetchAlbumList, search]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const handleOnClick = React.useCallback((pageNumber: number) => {
+  const handleOnPageClick = React.useCallback((pageNumber: number) => {
     const filter = {
       offset: pageNumber * ITEM_PER_PAGE,
       limit: ITEM_PER_PAGE,
@@ -49,28 +53,37 @@ const GalleryPage: React.FC<Props> = (props: Props) => {
     fetchAlbumList(filter);
   }, [fetchAlbumList]);
 
+  const handleOnClick = React.useCallback((id: number) => {
+    history.push(`/photos?albumId=${id}`);
+  }, [history]);
+
   if (filter.offset) {
     currentPage = Math.floor(filter.offset / ITEM_PER_PAGE);
   }
 
-  console.log('>>>>>MEMEMEMEM>>>>>', currentPage, filter, ITEM_PER_PAGE);
   return (
-    <div className="gallery">
+    <div className="albumsPage">
       {!!albumList && albumList.length && (
-        <ListGroup>
+        <div className="section">
           {albumList.map((album: any, index: number) => (
-            <ListGroup.Item key={`${album.title}-${index}`}>{album.title}</ListGroup.Item>
+            <div
+              className="block album"
+              key={`${album.title}-${index}`}
+              onClick={() => handleOnClick(album.id)}
+            >
+              {album.title}
+            </div>
           ))}
-        </ListGroup>
+        </div>
       )}
       <ListPagination
         totalCount={totalCount}
         itemPerPage={ITEM_PER_PAGE}
         currentPage={currentPage}
-        handlePageChange={handleOnClick}
+        handlePageChange={handleOnPageClick}
       />
     </div>
   );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GalleryPage);
+export default connect(mapStateToProps, mapDispatchToProps)(AlbumsPage);

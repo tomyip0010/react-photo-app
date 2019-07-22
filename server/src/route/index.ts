@@ -1,10 +1,12 @@
 import * as express from 'express';
-import gallery from './gallery';
-import album from './album';
+import albums from './albums';
+import photos from './photos';
+import photoDetail from './photoDetail';
 
 const router = express.Router();
 
-router.get('/gallery', gallery);
-router.get('/album', album);
+router.get('/albums', albums);
+router.get('/photos/:photoId', photoDetail);
+router.get('/photos', photos);
 
 export default router;

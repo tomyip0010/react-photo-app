@@ -1,10 +1,9 @@
-import { FETCH_ALBUM_PHOTOS } from './action';
+import { FETCH_PHOTO_DETAIL } from './action';
 
-const initialState: AlbumStoreType = {
+const initialState: PhotoDetailStoreType = {
   isFetching: false,
   fetchSuccess: false,
-  albumPhotos: [],
-  filter: {},
+  photoDetail: {},
   error: {},
 };
 
@@ -13,20 +12,20 @@ export default function reducer(
   action: GenericActionType,
 ) {
   switch (action.type) {
-    case FETCH_ALBUM_PHOTOS.REQUEST:
+    case FETCH_PHOTO_DETAIL.REQUEST:
       return {
         ...state,
-        albumPhotos: [],
+        photoDetail: {},
         isFetching: true,
       };
-    case FETCH_ALBUM_PHOTOS.SUCCESS:
+    case FETCH_PHOTO_DETAIL.SUCCESS:
       return {
         ...state,
-        albumPhotos: action.result.data,
+        photoDetail: action.result.data,
         isFetching: false,
         fetchSuccess: true,
       };
-    case FETCH_ALBUM_PHOTOS.FAILURE:
+    case FETCH_PHOTO_DETAIL.FAILURE:
       return {
         ...state,
         isFetching: false,

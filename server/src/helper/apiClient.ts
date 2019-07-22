@@ -23,6 +23,7 @@ export const apiRequest = (method:requestType, path: string, { params }: any): P
         withCredentials: true,
         params,
       };
+      console.log('>>>>>>', executeObject);
       const result = await axios.request<ServerData>(executeObject);
   
       resolve(result.data);

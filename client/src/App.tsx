@@ -1,28 +1,22 @@
 import * as React from 'react';
-import Navbar from 'react-bootstrap/Navbar';
+import NavBar from 'components/NavBar';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import GalleryPage from 'pages/GalleryPage';
-import logo from './logo.svg';
+import AlbumsPage from 'pages/AlbumsPage';
+import PhotosPage from 'pages/PhotosPage';
+import PhotoDetailPage from 'pages/PhotoDetailPage';
 import './App.css';
 
 type Props = {};
 
-const App: React.FC<Props> = (props: Props) => {
-
-
-  return (
-    <div className="App">
-      <Router>
-        <Navbar bg="dark" variant="dark">
-          <Navbar.Brand href="#home">
-            <img src={logo} className="App-logo" alt="logo" />
-            React Photo App
-          </Navbar.Brand>
-        </Navbar>
-        <Route exact path="/" component={GalleryPage} />
-      </Router>
-    </div>
-  );
-}
+const App: React.FC<Props> = (props: Props) => (
+  <div className="App">
+    <Router>
+      <NavBar />
+      <Route exact path="/albums" component={AlbumsPage} />
+      <Route exact path="/photos" component={PhotosPage} />
+      <Route path="/photos/:photoId" component={PhotoDetailPage} />
+    </Router>
+  </div>
+);
 
 export default App;
