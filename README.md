@@ -8,14 +8,14 @@ Built using `create-react-app` in typescript for better coding / debugging exper
 
 ### Stack
 
-⋅⋅* React
-⋅⋅* React-redux
-⋅⋅* React-saga
-⋅⋅* React-router-dom
-⋅⋅* React bootstrap
-⋅⋅* Bootstrap 4
-⋅⋅* Axios
-⋅⋅* Typescript
+* React
+* React-redux
+* React-saga
+* React-router-dom
+* React bootstrap
+* Bootstrap 4
+* Axios
+* Typescript
 
 ## Server
 
@@ -23,10 +23,10 @@ Built using `express` in typescript and using [https://jsonplaceholder.typicode.
 
 ### Stack
 
-⋅⋅* Express
-⋅⋅* Axios
-⋅⋅* Typescript
-⋅⋅* Redis
+* Express
+* Axios
+* Typescript
+* Redis
 
 ## Usage`
 
