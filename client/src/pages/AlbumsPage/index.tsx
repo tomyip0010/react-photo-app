@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { fetchAlbumList } from 'redux/albums/action';
 import ListPagination from 'components/ListPagination';
+import Spinner from 'react-bootstrap/Spinner'
 import 'components/SharedStyle.css';
 import './styles.css';
 
@@ -33,7 +34,7 @@ const ITEM_PER_PAGE = 20;
 const AlbumsPage: React.FC<Props> = (props: Props) => {
   const {
     location: { search }, fetchAlbumList, albumList, filter,
-    totalCount, history,
+    totalCount, history, isFetching,
   } = props;
   let currentPage = 0;
 
@@ -59,6 +60,10 @@ const AlbumsPage: React.FC<Props> = (props: Props) => {
 
   if (filter.offset) {
     currentPage = Math.floor(filter.offset / ITEM_PER_PAGE);
+  }
+
+  if (isFetching) {
+    return <Spinner animation="border" variant="info" />;
   }
 
   return (

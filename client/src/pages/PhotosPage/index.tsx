@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { fetchAlbumPhotos } from 'redux/photos/action';
 import ListPagination from 'components/ListPagination';
+import Spinner from 'react-bootstrap/Spinner'
 import 'components/SharedStyle.css';
 
 type ReduxType = {
@@ -32,7 +33,7 @@ const ITEM_PER_PAGE = 20;
 const PhotosPage: React.FC<Props> = (props: Props) => {
   const {
     location: { search }, fetchAlbumPhotos, albumPhotos, filter,
-    totalCount, history,
+    totalCount, history, isFetching,
   } = props;
   const query = queryString.parse(search);
   const refresh = query && query.refresh ? query.refresh === 'true' : false;
@@ -72,6 +73,10 @@ const PhotosPage: React.FC<Props> = (props: Props) => {
 
   if (filter.offset) {
     currentPage = Math.floor(filter.offset / ITEM_PER_PAGE);
+  }
+
+  if (isFetching) {
+    return <Spinner animation="border" variant="info" />;
   }
 
   return (

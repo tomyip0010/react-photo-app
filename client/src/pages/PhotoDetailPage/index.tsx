@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { fetchPhotoDetail } from 'redux/photoDetail/action';
+import Spinner from 'react-bootstrap/Spinner'
 
 type ReduxType = {
 
@@ -15,6 +16,7 @@ type Props = {
 
 const mapStateToProps = (state: ReduxStoreType) => ({
   photoDetail: state.photoDetail.photoDetail,
+  isFetching: state.photoDetail.isFetching,
 });
 
 const mapDispatchToProps = {
@@ -24,7 +26,8 @@ const mapDispatchToProps = {
 const PhotoDetailPage: React.FC<Props> = (props: Props) => {
   const {
     location: { search }, photoDetail, match, fetchPhotoDetail,
-} = props;
+    isFetching,
+  } = props;
   const { params: { photoId } } = match;
 
   React.useEffect(() => {
@@ -39,6 +42,10 @@ const PhotoDetailPage: React.FC<Props> = (props: Props) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [photoId]);
 
+  if (isFetching) {
+    return <Spinner animation="border" variant="info" />;
+  }
+
   if (!Object.keys(photoDetail).length) {
     return <div />;
   }
@@ -48,7 +55,9 @@ const PhotoDetailPage: React.FC<Props> = (props: Props) => {
   return (
     <div className="photoDetail">
       <img src={detail.url} alt={detail.title} />
-      <div>{detail.title}</div>
+      <div>title: {detail.title}</div>
+      <div>id: {detail.id}</div>
+      <div>albumId: {detail.albumId}</div>
     </div>
   );
 }
