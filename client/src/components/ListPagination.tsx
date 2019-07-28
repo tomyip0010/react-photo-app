@@ -1,4 +1,5 @@
 import * as React from 'react';
+import styled from 'styled-components';
 import Pagination from 'react-bootstrap/Pagination';
 
 interface Props {
@@ -7,6 +8,10 @@ interface Props {
   itemPerPage: number,
   currentPage: number,
 }
+
+const StyledPagination = styled(Pagination)`
+  justify-content: center;
+`;
 
 const ListPagination = (props: Props) => {
   const {
@@ -34,7 +39,7 @@ const ListPagination = (props: Props) => {
   }, [currentPage, totalPage, handlePageChange]);
 
   return (
-    <Pagination>
+    <StyledPagination>
       <Pagination.Prev
         active={prevPage !== null}
         disabled={prevPage === null}
@@ -43,9 +48,6 @@ const ListPagination = (props: Props) => {
         }
       />
       {numberPagination}
-     
-      {/* <Pagination.Ellipsis /> */}
-
       <Pagination.Next
         active={nextPage !== null}
         disabled={nextPage === null}
@@ -53,7 +55,7 @@ const ListPagination = (props: Props) => {
           (nextPage !== null ? handlePageChange(nextPage) : undefined)
         }
       />
-    </Pagination>
+    </StyledPagination>
   );
 }
 

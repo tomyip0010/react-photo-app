@@ -1,4 +1,4 @@
-import { FETCH_ALBUM_PHOTOS } from './action';
+import { FETCH_ALBUM_PHOTOS, CLEAR_FILTER } from './action';
 
 const initialState: PhotosStoreType = {
   isFetching: false,
@@ -42,7 +42,15 @@ export default function reducer(
         fetchSuccess: false,
         error: action.error,
       };
+    case CLEAR_FILTER:
+      return {
+        ...state,
+        filter: {
+          limit: 20,
+          offset: 0,
+        },
+      }
     default:
-      return initialState;
+      return state;
   }
 }

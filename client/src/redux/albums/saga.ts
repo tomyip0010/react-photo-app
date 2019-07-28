@@ -6,7 +6,7 @@ import { apiRequest } from 'helper/apiClient';
 
 function* watchfetchAlbumPhoto(data: GenericActionType) {
   const { params } = data;
-  if (!params.offset || !params.limit) {
+  if (isNaN(params.offset) || isNaN(params.limit)) {
     const filter = yield select((state: ReduxStoreType) => state.albums.filter);
     if (!params.offset) {
       params.offset = filter.offset;

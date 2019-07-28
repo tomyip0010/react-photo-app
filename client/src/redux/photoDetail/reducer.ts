@@ -33,6 +33,6 @@ export default function reducer(
         error: action.error,
       };
     default:
-      return initialState;
+      return state;
   }
 }

@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
+import styled from 'styled-components';
 import { fetchPhotoDetail } from 'redux/photoDetail/action';
-import Spinner from 'react-bootstrap/Spinner'
+import LoadingScreen from 'components/LoadingScreen';
+import NavBar from 'components/NavBar';
 
 type ReduxType = {
 
@@ -10,9 +12,14 @@ type ReduxType = {
 
 type Props = {
   location: Location,
+  history: any,
   match: any,
   fetchPhotoDetail: typeof fetchPhotoDetail,
 } & ReduxType;
+
+const InnerWrapper = styled.div`
+  margin: 40px 0;
+`;
 
 const mapStateToProps = (state: ReduxStoreType) => ({
   photoDetail: state.photoDetail.photoDetail,
@@ -26,7 +33,7 @@ const mapDispatchToProps = {
 const PhotoDetailPage: React.FC<Props> = (props: Props) => {
   const {
     location: { search }, photoDetail, match, fetchPhotoDetail,
-    isFetching,
+    isFetching, history,
   } = props;
   const { params: { photoId } } = match;
 
@@ -35,15 +42,15 @@ const PhotoDetailPage: React.FC<Props> = (props: Props) => {
     const refresh = query && query.refresh ? query.refresh === 'true' : false;
     fetchPhotoDetail(photoId, refresh);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
- 
-  React.useEffect(() => {
-    fetchPhotoDetail(photoId);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [photoId]);
 
+  const handleGoBack = React.useCallback(() => {
+    history.goBack();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (isFetching) {
-    return <Spinner animation="border" variant="info" />;
+    return <LoadingScreen />;
   }
 
   if (!Object.keys(photoDetail).length) {
@@ -54,10 +61,13 @@ const PhotoDetailPage: React.FC<Props> = (props: Props) => {
 
   return (
     <div className="photoDetail">
-      <img src={detail.url} alt={detail.title} />
-      <div>title: {detail.title}</div>
-      <div>id: {detail.id}</div>
-      <div>albumId: {detail.albumId}</div>
+      <NavBar title="Photo Detail" handleNavBack={handleGoBack} />
+      <InnerWrapper>
+        <img src={detail.url} alt={detail.title} />
+        <div>title: {detail.title}</div>
+        <div>id: {detail.id}</div>
+        <div>albumId: {detail.albumId}</div>
+      </InnerWrapper>
     </div>
   );
 }

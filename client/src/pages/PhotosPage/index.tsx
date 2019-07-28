@@ -1,10 +1,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
-import { fetchAlbumPhotos } from 'redux/photos/action';
+import styled from 'styled-components';
+import NavBar from 'components/NavBar';
+import { fetchAlbumPhotos, clearFilter } from 'redux/photos/action';
 import ListPagination from 'components/ListPagination';
-import Spinner from 'react-bootstrap/Spinner'
-import 'components/SharedStyle.css';
+import LoadingScreen from 'components/LoadingScreen';
+import { Section } from 'components/SharedStyle';
+import CardGroup from 'react-bootstrap/CardGroup'
+import Card from 'react-bootstrap/Card';
 
 type ReduxType = {
 
@@ -13,8 +17,17 @@ type ReduxType = {
 type Props = {
   history: any,
   fetchAlbumPhotos: typeof fetchAlbumPhotos,
+  clearFilter: typeof clearFilter,
   location: Location,
 } & ReduxType;
+
+const PhotoCard = styled(Card)`
+  flex: 1;
+  padding: 16px;
+  border: none;
+  min-width: 150px;
+  min-height: 150px;
+`;
 
 const mapStateToProps = (state: ReduxStoreType) => ({
   isFetching: state.photos.isFetching,
@@ -26,6 +39,7 @@ const mapStateToProps = (state: ReduxStoreType) => ({
 
 const mapDispatchToProps = {
   fetchAlbumPhotos,
+  clearFilter,
 };
 
 const ITEM_PER_PAGE = 20;
@@ -33,7 +47,7 @@ const ITEM_PER_PAGE = 20;
 const PhotosPage: React.FC<Props> = (props: Props) => {
   const {
     location: { search }, fetchAlbumPhotos, albumPhotos, filter,
-    totalCount, history, isFetching,
+    totalCount, history, isFetching, clearFilter,
   } = props;
   const query = queryString.parse(search);
   const refresh = query && query.refresh ? query.refresh === 'true' : false;
@@ -46,13 +60,6 @@ const PhotosPage: React.FC<Props> = (props: Props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  React.useEffect(() => {
-    if (!!albumId) {
-      fetchAlbumPhotos(albumId, null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [albumId]);
 
   const handleOnPageClick = React.useCallback((pageNumber: number) => {
     const query = queryString.parse(search);
@@ -71,21 +78,28 @@ const PhotosPage: React.FC<Props> = (props: Props) => {
     history.push(`/photos/${id}`);
   }, [history]);
 
+  const handleGoBack = React.useCallback(() => {
+    clearFilter();
+    history.push('/albums');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clearFilter]);
+
   if (filter.offset) {
     currentPage = Math.floor(filter.offset / ITEM_PER_PAGE);
   }
 
   if (isFetching) {
-    return <Spinner animation="border" variant="info" />;
+    return <LoadingScreen />;
   }
 
   return (
     <div className="photosPage">
-      {!!albumPhotos && albumPhotos.length && (
-        <div className="section">
+      <NavBar title="Photos" handleNavBack={handleGoBack} />
+      <Section>
+      {!!albumPhotos && albumPhotos.length ? (
+        <CardGroup>
           {albumPhotos.map((photo: PhotoType, index: number) => (
-            <div
-              className="block"
+            <PhotoCard
               key={`${photo.title}-${index}`}
               onClick={() => handleOnClick(photo.id)}
             >
@@ -97,10 +111,11 @@ const PhotosPage: React.FC<Props> = (props: Props) => {
               <div>
                 {photo.title}
               </div>
-            </div>
+            </PhotoCard>
           ))}
-        </div>
-      )}
+        </CardGroup>
+        ) : null}
+      </Section>
       <ListPagination
         totalCount={totalCount}
         itemPerPage={ITEM_PER_PAGE}

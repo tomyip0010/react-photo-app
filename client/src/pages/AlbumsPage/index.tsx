@@ -1,15 +1,21 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
+import NavBar from 'components/NavBar';
+import styled from 'styled-components';
 import { fetchAlbumList } from 'redux/albums/action';
 import ListPagination from 'components/ListPagination';
-import Spinner from 'react-bootstrap/Spinner'
-import 'components/SharedStyle.css';
-import './styles.css';
+import LoadingScreen from 'components/LoadingScreen';
+import { Section } from 'components/SharedStyle';
+import CardGroup from 'react-bootstrap/CardGroup'
+import Card from 'react-bootstrap/Card';
 
 type ReduxType = {
 
 } & AlbumsStoreType;
+
+type ColorType = 'primary' | 'secondary' | 'success' |
+ 'danger' | 'warning' |'info' | 'light' | 'dark';
 
 type Props = {
   fetchAlbumList: typeof fetchAlbumList,
@@ -28,6 +34,24 @@ const mapStateToProps = (state: ReduxStoreType) => ({
 const mapDispatchToProps = {
   fetchAlbumList,
 };
+
+const AlbumCard = styled(Card)`
+  flex: 1;
+  min-width: 20%;
+  margin: 20px 20px 20px 0;
+  padding: 16px;
+  border-radius: 8px !important;
+`;
+
+const bgGroup: Array<ColorType> = [
+  'primary',
+  'secondary',
+  'success',
+  'danger',
+  'warning',
+  'info',
+  'dark',
+];
 
 const ITEM_PER_PAGE = 20;
 
@@ -63,24 +87,32 @@ const AlbumsPage: React.FC<Props> = (props: Props) => {
   }
 
   if (isFetching) {
-    return <Spinner animation="border" variant="info" />;
+    return <LoadingScreen />;
   }
 
   return (
     <div className="albumsPage">
-      {!!albumList && albumList.length && (
-        <div className="section">
-          {albumList.map((album: any, index: number) => (
-            <div
-              className="block album"
-              key={`${album.title}-${index}`}
-              onClick={() => handleOnClick(album.id)}
-            >
-              {album.title}
-            </div>
-          ))}
-        </div>
-      )}
+      <NavBar title="Albums" />
+      <Section>
+        {!!albumList && albumList.length ? (
+          <CardGroup>
+            {albumList.map((album: any, index: number) => {
+              const rand = Math.floor(Math.random() * bgGroup.length);
+              const colorSet = bgGroup[rand];
+              return (
+                <AlbumCard
+                  bg={colorSet}
+                  text="white"
+                  key={`${album.title}-${index}`}
+                  onClick={() => handleOnClick(album.id)}
+                >
+                  {album.title}
+                </AlbumCard>
+              )
+            })}
+          </CardGroup>
+        ) : null}
+      </Section>
       <ListPagination
         totalCount={totalCount}
         itemPerPage={ITEM_PER_PAGE}
