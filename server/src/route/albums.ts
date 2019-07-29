@@ -1,5 +1,7 @@
+import { Request, Response, NextFunction } from 'express';
 import { apiRequest } from '../helper/apiClient';
 import { getRedisKey, exSetRedisKey } from '../helper/cacheManager';
+import HttpException from '../helper/HttpException';
 
 interface AlbumsType {
   userId: number,
@@ -15,7 +17,7 @@ interface ResponseType {
   data: Array<AlbumsType>
 }
 
-async function getAlbumContent(req: any, res: any): Promise<void> {
+async function getAlbumContent(req: Request, res: Response, next: NextFunction) {
   const refresh = req.query.refresh === 'true';
   const offset = req.query.offset && !isNaN(req.query.offset) ? Number(req.query.offset) : 0;
   const limit = req.query.limit && !isNaN(req.query.limit) ? Number(req.query.limit) : 20;
@@ -48,11 +50,18 @@ async function getAlbumContent(req: any, res: any): Promise<void> {
       response.success = true;
       response.totalCount = dataContent.length;
       exSetRedisKey(key, JSON.stringify(dataContent), 86400);
-      return res.send(response);
+      return res.send({ response });
     }
-    return res.send(response);
+    return res.send({ response });
   } catch (err) {
     console.log('fetch albums content error ', err);
+    let errorCode = 500;
+    let errorMessages = 'Something went wrong!';
+    if (err.response) {
+      errorCode = err.response.status;
+      errorMessages = err.response.statusText;
+    }
+    next(new HttpException(errorCode, errorMessages));
   }
 }
 

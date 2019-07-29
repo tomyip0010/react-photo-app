@@ -6,6 +6,8 @@ import { fetchPhotoDetail } from 'redux/photoDetail/action';
 import LoadingScreen from 'components/LoadingScreen';
 import NavBar from 'components/NavBar';
 
+type ContentType = 'title' | 'id' | 'albumId';
+
 type ReduxType = {
 
 } & PhotoDetailStoreType;
@@ -18,12 +20,42 @@ type Props = {
 } & ReduxType;
 
 const InnerWrapper = styled.div`
-  margin: 40px 0;
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  padding: 20px;;
 `;
+
+const Image = styled.img`
+  flex: 1;
+  width: 100%;
+  max-width: 600px;
+  max-height: 600px;
+`;
+
+const DetailGroup = styled.div``;
+
+const Row = styled.div`
+  display: flex;
+  margin: 8px 0;
+`;
+
+const Title = styled.div`
+  text-transform: capitalize;
+  font-weight: bold;
+  margin-right: 8px;
+`;
+
+const Text = styled.div``;
+
+const content: Array<ContentType> = ['title', 'id', 'albumId'];
 
 const mapStateToProps = (state: ReduxStoreType) => ({
   photoDetail: state.photoDetail.photoDetail,
   isFetching: state.photoDetail.isFetching,
+  error: state.photoDetail.error,
 });
 
 const mapDispatchToProps = {
@@ -33,7 +65,7 @@ const mapDispatchToProps = {
 const PhotoDetailPage: React.FC<Props> = (props: Props) => {
   const {
     location: { search }, photoDetail, match, fetchPhotoDetail,
-    isFetching, history,
+    isFetching, history, error,
   } = props;
   const { params: { photoId } } = match;
 
@@ -44,30 +76,42 @@ const PhotoDetailPage: React.FC<Props> = (props: Props) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [photoId]);
 
-  const handleGoBack = React.useCallback(() => {
-    history.goBack();
+  React.useEffect(() => {
+    if (error && error.message) {
+      history.push('/no-match');
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (isFetching) {
-    return <LoadingScreen />;
-  }
-
-  if (!Object.keys(photoDetail).length) {
-    return <div />;
-  }
+  }, [error]);
 
   const detail = photoDetail as PhotoType;
+
+  const handleGoBack = React.useCallback(() => {
+    history.push(`/photos?albumId=${detail.albumId}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [detail]);
 
   return (
     <div className="photoDetail">
       <NavBar title="Photo Detail" handleNavBack={handleGoBack} />
-      <InnerWrapper>
-        <img src={detail.url} alt={detail.title} />
-        <div>title: {detail.title}</div>
-        <div>id: {detail.id}</div>
-        <div>albumId: {detail.albumId}</div>
-      </InnerWrapper>
+      {isFetching ? (
+        <LoadingScreen />
+      ) : (
+        <InnerWrapper>
+          <Image src={detail.url} alt={detail.title} />
+          <DetailGroup>
+            {content.map((field: ContentType) => (
+              <Row key={field}>
+                <Title>
+                  {field}:
+                </Title>
+                <Text>
+                  {detail[field]}
+                </Text>
+              </Row>
+            ))}
+          </DetailGroup>
+        </InnerWrapper>
+      )}
     </div>
   );
 }

@@ -29,6 +29,7 @@ const mapStateToProps = (state: ReduxStoreType) => ({
   totalCount: state.albums.totalCount,
   albumList: state.albums.albumList,
   filter: state.albums.filter,
+  error: state.albums.error,
 });
 
 const mapDispatchToProps = {
@@ -58,7 +59,7 @@ const ITEM_PER_PAGE = 20;
 const AlbumsPage: React.FC<Props> = (props: Props) => {
   const {
     location: { search }, fetchAlbumList, albumList, filter,
-    totalCount, history, isFetching,
+    totalCount, history, isFetching, error,
   } = props;
   let currentPage = 0;
 
@@ -69,6 +70,13 @@ const AlbumsPage: React.FC<Props> = (props: Props) => {
     fetchAlbumList(null, refresh);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  React.useEffect(() => {
+    if (error && error.message) {
+      history.push('/no-match');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
 
   const handleOnPageClick = React.useCallback((pageNumber: number) => {
     const filter = {
@@ -86,33 +94,33 @@ const AlbumsPage: React.FC<Props> = (props: Props) => {
     currentPage = Math.floor(filter.offset / ITEM_PER_PAGE);
   }
 
-  if (isFetching) {
-    return <LoadingScreen />;
-  }
-
   return (
     <div className="albumsPage">
       <NavBar title="Albums" />
-      <Section>
-        {!!albumList && albumList.length ? (
-          <CardGroup>
-            {albumList.map((album: any, index: number) => {
-              const rand = Math.floor(Math.random() * bgGroup.length);
-              const colorSet = bgGroup[rand];
-              return (
-                <AlbumCard
-                  bg={colorSet}
-                  text="white"
-                  key={`${album.title}-${index}`}
-                  onClick={() => handleOnClick(album.id)}
-                >
-                  {album.title}
-                </AlbumCard>
-              )
-            })}
-          </CardGroup>
-        ) : null}
-      </Section>
+      {isFetching ? (
+        <LoadingScreen />
+      ) : (
+        <Section>
+          {!!albumList && albumList.length ? (
+            <CardGroup>
+              {albumList.map((album: any, index: number) => {
+                const rand = Math.floor(Math.random() * bgGroup.length);
+                const colorSet = bgGroup[rand];
+                return (
+                  <AlbumCard
+                    bg={colorSet}
+                    text="white"
+                    key={`${album.title}-${index}`}
+                    onClick={() => handleOnClick(album.id)}
+                  >
+                    {album.title}
+                  </AlbumCard>
+                )
+              })}
+            </CardGroup>
+          ) : null}
+        </Section>
+      )}
       <ListPagination
         totalCount={totalCount}
         itemPerPage={ITEM_PER_PAGE}

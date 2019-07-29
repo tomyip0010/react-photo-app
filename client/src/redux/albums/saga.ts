@@ -15,23 +15,19 @@ function* watchfetchAlbumPhoto(data: GenericActionType) {
       params.limit = filter.limit;
     }
   }
-  const response = yield call(apiRequest, 'get', '/albums', data);
+  const { response, error } = yield call(apiRequest, 'get', '/albums', data);
 
-  if (response) {
+  if (error) {
+    yield put({
+      type: FETCH_ALBUM_LIST.FAILURE,
+      error,
+    });
+  } else {
     yield put({
       type: FETCH_ALBUM_LIST.SUCCESS,
       result: response,
     });
   }
-  // if (error) {
-  //   console.log('>>>>>>with error', error);
-  //   // yield call(handleError, FETCH_ALBUM_LIST, error);
-  // } else if (response) {
-  //   yield put({
-  //     type: FETCH_ALBUM_LIST.SUCCESS,
-  //     result: response,
-  //   });
-  // }
 }
 
 export default function* albumsSaga() {

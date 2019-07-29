@@ -35,6 +35,7 @@ const mapStateToProps = (state: ReduxStoreType) => ({
   totalCount: state.photos.totalCount,
   albumPhotos: state.photos.albumPhotos,
   filter: state.photos.filter,
+  error: state.photos.error,
 });
 
 const mapDispatchToProps = {
@@ -47,11 +48,11 @@ const ITEM_PER_PAGE = 20;
 const PhotosPage: React.FC<Props> = (props: Props) => {
   const {
     location: { search }, fetchAlbumPhotos, albumPhotos, filter,
-    totalCount, history, isFetching, clearFilter,
+    totalCount, history, isFetching, clearFilter, error,
   } = props;
   const query = queryString.parse(search);
   const refresh = query && query.refresh ? query.refresh === 'true' : false;
-  const albumId = query && query.albumId ? Number(query.albumId) : null;
+  const albumId = query && query.albumId ? query.albumId as string : null;
   let currentPage = 0;
 
   React.useEffect(() => {
@@ -61,10 +62,14 @@ const PhotosPage: React.FC<Props> = (props: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleOnPageClick = React.useCallback((pageNumber: number) => {
-    const query = queryString.parse(search);
-    const albumId = query && query.albumId ? Number(query.albumId) : null;
+  React.useEffect(() => {
+    if (error && error.message) {
+      history.push('/no-match');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
 
+  const handleOnPageClick = React.useCallback((pageNumber: number) => {
     const filter = {
       offset: pageNumber * ITEM_PER_PAGE,
       limit: ITEM_PER_PAGE,
@@ -72,7 +77,7 @@ const PhotosPage: React.FC<Props> = (props: Props) => {
     if (!!albumId) {
       fetchAlbumPhotos(albumId, filter);
     }
-  }, [fetchAlbumPhotos, search]);
+  }, [fetchAlbumPhotos, albumId]);
 
   const handleOnClick = React.useCallback((id: number) => {
     history.push(`/photos/${id}`);
@@ -88,34 +93,34 @@ const PhotosPage: React.FC<Props> = (props: Props) => {
     currentPage = Math.floor(filter.offset / ITEM_PER_PAGE);
   }
 
-  if (isFetching) {
-    return <LoadingScreen />;
-  }
-
   return (
     <div className="photosPage">
       <NavBar title="Photos" handleNavBack={handleGoBack} />
-      <Section>
-      {!!albumPhotos && albumPhotos.length ? (
-        <CardGroup>
-          {albumPhotos.map((photo: PhotoType, index: number) => (
-            <PhotoCard
-              key={`${photo.title}-${index}`}
-              onClick={() => handleOnClick(photo.id)}
-            >
-              <img
-                className="album-thumbnail"
-                src={photo.thumbnailUrl}
-                alt={`${photo.title}-thumbnail`}
-              />
-              <div>
-                {photo.title}
-              </div>
-            </PhotoCard>
-          ))}
-        </CardGroup>
-        ) : null}
-      </Section>
+      {isFetching ? (
+        <LoadingScreen />
+      ) : (
+        <Section>
+        {!!albumPhotos && albumPhotos.length ? (
+          <CardGroup>
+            {albumPhotos.map((photo: PhotoType, index: number) => (
+              <PhotoCard
+                key={`${photo.title}-${index}`}
+                onClick={() => handleOnClick(photo.id)}
+              >
+                <img
+                  className="album-thumbnail"
+                  src={photo.thumbnailUrl}
+                  alt={`${photo.title}-thumbnail`}
+                />
+                <div>
+                  {photo.title}
+                </div>
+              </PhotoCard>
+            ))}
+          </CardGroup>
+          ) : null}
+        </Section>
+      )}
       <ListPagination
         totalCount={totalCount}
         itemPerPage={ITEM_PER_PAGE}

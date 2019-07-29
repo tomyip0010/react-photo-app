@@ -1,5 +1,7 @@
+import { NextFunction, Request, Response } from 'express';
 import { apiRequest } from '../helper/apiClient';
 import { getRedisKey, exSetRedisKey } from '../helper/cacheManager';
+import HttpException from '../helper/HttpException';
 
 interface PhotoType {
   albumId: number,
@@ -17,7 +19,7 @@ interface ResponseType {
   data: Array<PhotoType>
 }
 
-async function getPhotosContent(req: any, res: any): Promise<void> {
+async function getPhotosContent(req: Request, res: Response, next: NextFunction) {
   const refresh = req.query.refresh === 'true';
   const id = req.query.id;
   const offset = req.query.offset && !isNaN(req.query.offset) ? Number(req.query.offset) : 0;
@@ -51,11 +53,18 @@ async function getPhotosContent(req: any, res: any): Promise<void> {
       response.success = true;
       response.totalCount = dataContent.length;
       exSetRedisKey(key, JSON.stringify(dataContent), 86400);
-      return res.send(response);
+      return res.send({ response });
     }
-    return res.send(response);
+    return res.send({ response });
   } catch (err) {
     console.log('fetch gallery content error ', err);
+    let errorCode = 500;
+    let errorMessages = 'Something went wrong!';
+    if (err.response) {
+      errorCode = err.response.status;
+      errorMessages = err.response.statusText;
+    }
+    next(new HttpException(errorCode, errorMessages));
   }
 }
 

@@ -1,5 +1,7 @@
+import { NextFunction, Request, Response } from 'express';
 import { apiRequest } from '../helper/apiClient';
 import { getRedisKey, exSetRedisKey } from '../helper/cacheManager';
+import HttpException from '../helper/HttpException';
 
 interface PhotoType {
   albumId: number,
@@ -9,18 +11,23 @@ interface PhotoType {
   url: string,
 }
 
-interface PhotoDetailResponseType {
-  success: boolean,
-  data: Array<PhotoType>
+interface ErrorType {
+  errorCode: number,
+  errorMessage: string,
 }
 
-async function getPhotoDetailContent(req: any, res: any): Promise<void> {
+interface PhotoDetailResponseType {
+  success: boolean,
+  data?: Array<PhotoType>,
+  error?: ErrorType,
+}
+
+async function getPhotoDetailContent(req: Request, res: Response, next: NextFunction) {
   const photoId = req.params.photoId && !isNaN(req.params.photoId) ? Number(req.params.photoId) : null;
   const refresh = req.query.refresh === 'true';
   const key = `photoDetail-content-${photoId}`;
   const response: PhotoDetailResponseType = {
     success: false,
-    data: [],
   };
 
   try {
@@ -40,11 +47,18 @@ async function getPhotoDetailContent(req: any, res: any): Promise<void> {
       response.data = dataContent;
       response.success = true;
       exSetRedisKey(key, JSON.stringify(dataContent), 86400);
-      return res.send(response);
+      return res.send({ response });
     }
-    return res.send(response);
+    return res.send({ response });
   } catch (err) {
     console.log('fetch photo detail content error ', err);
+    let errorCode = 500;
+    let errorMessages = 'Something went wrong!';
+    if (err.response) {
+      errorCode = err.response.status;
+      errorMessages = err.response.statusText;
+    }
+    next(new HttpException(errorCode, errorMessages));
   }
 }
 
