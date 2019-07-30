@@ -19,7 +19,7 @@ type ColorType = 'primary' | 'secondary' | 'success' |
 
 type Props = {
   fetchAlbumList: typeof fetchAlbumList,
-  location: Location,
+  location: any,
   history: any,
 } & ReduxType;
 
@@ -56,7 +56,7 @@ const bgGroup: Array<ColorType> = [
 
 const ITEM_PER_PAGE = 20;
 
-const AlbumsPage: React.FC<Props> = (props: Props) => {
+export const AlbumsPage: React.FC<Props> = (props: Props) => {
   const {
     location: { search }, fetchAlbumList, albumList, filter,
     totalCount, history, isFetching, error,

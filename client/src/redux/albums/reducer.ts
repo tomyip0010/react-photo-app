@@ -1,6 +1,6 @@
 import { FETCH_ALBUM_LIST } from './action';
 
-const initialState: AlbumsStoreType = {
+export const initialState: AlbumsStoreType = {
   isFetching: false,
   fetchSuccess: false,
   albumList: [],

@@ -1,0 +1,167 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AlbumsPage Matches the snapshot 1`] = `
+<div
+  className="albumsPage"
+>
+  <div>
+    <nav
+      className="navbar navbar-expand navbar-dark bg-dark"
+    >
+      <a
+        className="sc-bdVaJa heUcHr navbar-brand"
+        href="#home"
+      >
+        <img
+          alt="logo"
+          src="logo.svg"
+        />
+      </a>
+      <div
+        className="sc-bwzfXH eocOaE"
+      >
+        React Photo App
+      </div>
+    </nav>
+    <div
+      className="sc-htpNat jmLCxE"
+    >
+      <div
+        className="sc-ifAKCX itiWWq"
+      >
+        Albums
+      </div>
+    </div>
+  </div>
+  <div
+    className="sc-gzVnrw iIRnHj"
+  />
+  <ul
+    className="sc-EHOje kAXgCi pagination"
+  >
+    <li
+      className="page-item disabled"
+    >
+      <span
+        className="page-link"
+        disabled={true}
+        onClick={[Function]}
+      >
+        <span
+          aria-hidden="true"
+        >
+          ‹
+        </span>
+        <span
+          className="sr-only"
+        >
+          Previous
+        </span>
+      </span>
+    </li>
+    <li
+      className="page-item disabled"
+    >
+      <span
+        className="page-link"
+        disabled={true}
+        onClick={[Function]}
+      >
+        <span
+          aria-hidden="true"
+        >
+          ›
+        </span>
+        <span
+          className="sr-only"
+        >
+          Next
+        </span>
+      </span>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`Button component Matches the snapshot 1`] = `
+<div
+  className="albumsPage"
+>
+  <div>
+    <nav
+      className="navbar navbar-expand navbar-dark bg-dark"
+    >
+      <a
+        className="sc-bdVaJa heUcHr navbar-brand"
+        href="#home"
+      >
+        <img
+          alt="logo"
+          src="logo.svg"
+        />
+      </a>
+      <div
+        className="sc-bwzfXH eocOaE"
+      >
+        React Photo App
+      </div>
+    </nav>
+    <div
+      className="sc-htpNat jmLCxE"
+    >
+      <div
+        className="sc-ifAKCX itiWWq"
+      >
+        Albums
+      </div>
+    </div>
+  </div>
+  <div
+    className="sc-gzVnrw iIRnHj"
+  />
+  <ul
+    className="sc-EHOje kAXgCi pagination"
+  >
+    <li
+      className="page-item disabled"
+    >
+      <span
+        className="page-link"
+        disabled={true}
+        onClick={[Function]}
+      >
+        <span
+          aria-hidden="true"
+        >
+          ‹
+        </span>
+        <span
+          className="sr-only"
+        >
+          Previous
+        </span>
+      </span>
+    </li>
+    <li
+      className="page-item disabled"
+    >
+      <span
+        className="page-link"
+        disabled={true}
+        onClick={[Function]}
+      >
+        <span
+          aria-hidden="true"
+        >
+          ›
+        </span>
+        <span
+          className="sr-only"
+        >
+          Next
+        </span>
+      </span>
+    </li>
+  </ul>
+</div>
+`;
